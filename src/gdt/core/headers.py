@@ -180,7 +180,8 @@ class FileHeaders():
         for i in range(num_headers):
             cidx = 0
             hidx = 0
-            for key in obj[i].keys():
+            #for key in obj[i].keys():
+            for key in [k for k in obj[i].keys() if k in headers[i]]:
                 if (key == 'COMMENT'):
                     obj[i][key][cidx] = headers[i][key][cidx]
                     cidx += 1
