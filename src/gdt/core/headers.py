@@ -193,6 +193,9 @@ class FileHeaders():
                         
                 elif (key == 'HISTORY'):
                     try:
+                        # DOC
+                        if hidx >= len(headers[i][key]):
+                            continue
                         obj[i][key][hidx] = headers[i][key][hidx]
                         hidx += 1
                     except KeyError:
