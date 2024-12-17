@@ -472,11 +472,8 @@ class HealPixLocalization(HealPix):
         # use matplotlib contour to produce a path object
         contour = Contour(ra, dec, sig_arr, [clevel])
 
-        # get the contour path, which is made up of segments
-        paths = contour.collections[0].get_paths()
-
         # extract all the vertices
-        pts = [path.vertices for path in paths]
+        pts = contour.allsegs[0]
 
         # unfortunately matplotlib will plot this, so we need to remove
         for c in contour.collections:
@@ -717,7 +714,7 @@ class HealPixLocalization(HealPix):
             # approximate arclength determines number of points in each annulus
             arclength = 2.0*np.pi*x[i]
             numpts = int(np.ceil(arclength/res))*10
-            circ = sky_circle(x[i], center_phi, center_theta, num_points=numpts)
+            circ = sky_circle(center_phi, center_theta, x[i], num_points=numpts)
             theta = np.pi / 2.0 - circ[1]
             phi = circ[0]
             

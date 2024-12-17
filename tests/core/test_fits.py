@@ -26,39 +26,23 @@
 # implied. See the License for the specific language governing permissions and limitations under the
 # License.
 #
-import os
-from pathlib import Path
-import shutil
+import unittest
 
-# Use the backport version if importlib.resources for Python earlier than 3.10
-import sys
-if sys.version_info < (3, 10):
-    from importlib_resources import files
-else:
-    from importlib.resources import files
+from gdt.core.fits import scientific_card, fixed_card
 
-_gdt_data = files('gdt.data')
+class TestFitCards(unittest.TestCase):
+    def test_fixed_card(self):
+        val = 7.428703703703703e-4
+        card = fixed_card('FIXEDV', val, comment='fixed floating point')
+        assert card.image == "FIXEDV  =              0.00074 / fixed floating point                           "
 
-__version__ = '2.1.0'
+    def test_scientific_card(self):
+        val = 7.428703703703703e-4
+        card = scientific_card('FLOATV', val, comment='exponential floating point')
+        assert card.image == "FLOATV  =           7.42870E-4 / exponential floating point                     "
 
-suite_path = Path(__file__).parent.parent
-
-if 'GDT_BASE' in os.environ:
-    base_path = Path(os.environ['GDT_BASE'])
-else:
-    base_path = Path.home().joinpath('.gammaray_data_tools', __version__)
-
-cache_path = base_path.joinpath('cache')
-
-if 'GDT_DATA' in os.environ:
-    data_path = Path(os.environ['GDT_DATA'])
-else:
-    data_path = base_path.joinpath('test_data')
-
-# Create the data directory and copy a sample spectral data file for tutorial
-data_path.mkdir(parents=True, exist_ok=True)
-_src = _gdt_data / 'specfit.npz'
-_dest = data_path / 'specfit.npz'
-
-if not _dest.exists():
-    shutil.copyfile(_src, _dest)
+    def test_scientific_card_use_d(self):
+        val = 7.428703703703703e-4
+        card = scientific_card('DOUBLV', val, places=15, use_d=True,
+                                comment='exponential floating point (as double)')
+        assert card.image == "DOUBLV  = 7.428703703703703D-4 / exponential floating point (as double)         "
